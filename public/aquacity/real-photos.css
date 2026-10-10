@@ -4,3 +4,5 @@
 [data-reference=progress] .compare>div:first-child img,[data-reference=progress] .compare>div:nth-child(2) img,[data-reference=simulator] .compare>div:first-child img,[data-reference=simulator] .compare>div:nth-child(2) img{clip-path:none!important}.compare-handle{top:45%!important}
 
 [data-reference=projects] .project-card>img{height:196px;width:100%;object-fit:cover}.project-panel{z-index:8;box-shadow:0 12px 40px #173f3e55!important}
+.simulator-motto{display:none!important}
+[data-reference=projects] .heading p,[data-reference=missions] .heading p{background:#faf7efe6;border-radius:6px;padding:3px 6px}
