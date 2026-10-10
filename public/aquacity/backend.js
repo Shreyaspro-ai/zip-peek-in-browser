@@ -122,6 +122,8 @@ if (isWelcome) {
 
     function eligible(node) {
       const p = node.parentElement;
+      if (p && p.closest("[id]") && document.querySelector(`input[data-output="${p.closest("[id]").id}"]`)) return false;
+      if (p && p.closest(".box, div")?.querySelector("input[type=range]") && p.closest("output, [id], .value") && p.parentElement?.querySelector("input[type=range]")) return false;
       if (!p || p.closest("#sidebar, .page-number, svg, output, script, style, button, label, .tab, .chip, h1, h2")) return false;
       return true;
     }
