@@ -41,6 +41,38 @@ export type Database = {
         }
         Relationships: []
       }
+      city_state: {
+        Row: {
+          actions_count: number
+          deltas: Json
+          seed: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          actions_count?: number
+          deltas?: Json
+          seed?: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          actions_count?: number
+          deltas?: Json
+          seed?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "city_state_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: true
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -103,7 +135,32 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      apply_city_action: {
+        Args: {
+          _action: string
+          _intensity: number
+          _keys: string[]
+          _page: string
+        }
+        Returns: Json
+      }
+      ensure_city_state: {
+        Args: never
+        Returns: {
+          actions_count: number
+          deltas: Json
+          seed: number
+          updated_at: string
+          user_id: string
+        }
+        SetofOptions: {
+          from: "*"
+          to: "city_state"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
+      reset_city: { Args: never; Returns: undefined }
     }
     Enums: {
       [_ in never]: never
