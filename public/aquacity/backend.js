@@ -187,15 +187,16 @@ if (isWelcome) {
     const observe = () => { const p = document.getElementById("page"); if (p) observer.observe(p, { childList: true, subtree: true, characterData: true }); };
     transformPage(); observe();
 
-    const toast = (msg) => {
+    const toast = (msg, kind) => {
       let t = document.getElementById("aq-toast");
       if (!t) {
         t = document.createElement("div"); t.id = "aq-toast"; t.setAttribute("role", "status");
-        t.style.cssText = "position:fixed;left:50%;bottom:24px;transform:translateX(-50%);z-index:9999;padding:12px 20px;border-radius:12px;background:#061c3b;color:#fff;font:600 14px Arial,sans-serif;box-shadow:0 10px 30px #0004;transition:opacity .3s;opacity:0;pointer-events:none";
+        t.style.cssText = "position:fixed;left:50%;bottom:24px;transform:translateX(-50%);z-index:9999;max-width:min(560px,90vw);padding:12px 20px;border-radius:12px;background:#061c3b;color:#fff;font:600 14px/1.4 Arial,sans-serif;box-shadow:0 10px 30px #0004;transition:opacity .3s;opacity:0;pointer-events:none";
         document.body.append(t);
       }
+      t.style.borderLeft = kind === "constructive" ? "6px solid #2fbf71" : kind === "destructive" ? "6px solid #e5484d" : "6px solid transparent";
       t.textContent = msg; t.style.opacity = "1";
-      clearTimeout(t._h); t._h = setTimeout(() => (t.style.opacity = "0"), 2600);
+      clearTimeout(t._h); t._h = setTimeout(() => (t.style.opacity = "0"), kind ? 5000 : 2600);
     };
 
     const LABELS = {
@@ -207,23 +208,27 @@ if (isWelcome) {
       "apply-plan": "District plan applied",
       "repair": "Leak repaired",
     };
+    let planningTool = "Housing";
     async function runAction(action, values = []) {
       const keys = [];
       const page = document.getElementById("page");
       const walker = document.createTreeWalker(page, NodeFilter.SHOW_TEXT);
       while (walker.nextNode()) { const k = keyOf.get(walker.currentNode); if (k) keys.push(k); }
-      const ranges = values.filter((v) => v.value !== "" && !isNaN(Number(v.value)));
-      const intensity = ranges.length ? 1 + ranges.reduce((a, v) => a + (Number(v.value) % 100) / 100, 0) / ranges.length * 3 : 1.5;
-      const { data, error } = await sb.rpc("apply_city_action", { _page: currentPage(), _action: action, _keys: keys, _intensity: intensity });
+      const inputs = { values: values.map((v) => ({ name: String(v.name || ""), value: String(v.value ?? "") })), tool: planningTool };
+      const { data, error } = await sb.rpc("evaluate_city_action", { _page: currentPage(), _action: action, _inputs: inputs, _keys: keys });
       if (error) { toast("Couldn't save — please try again."); return; }
       city.deltas = data.deltas || {};
       transformPage();
-      toast(`${LABELS[action] || "Saved"} · your city has been updated`);
+      const icon = { constructive: "✅ Constructive", destructive: "⚠️ Destructive", neutral: "➖ Neutral", ignored: "⏳ Ignored" }[data.verdict] || "Saved";
+      const pts = data.points ? ` · ${data.points > 0 ? "+" : ""}${data.points} pts` : "";
+      toast(`${icon} (${data.score > 0 ? "+" : ""}${data.score})${pts} — ${(data.reasons || []).join(" ")}`, data.verdict);
     }
 
     // Backend hook buttons emitted by the site (Apply, Run Scenario, Run Simulation, …)
     document.addEventListener("aquacity:action", (e) => {
-      const { action, values } = e.detail || {};
+      const { action, values, tool } = e.detail || {};
+      if (action === "select-planning-tool") { planningTool = tool || planningTool; return; }
+      if (!LABELS[action]) return;
       runAction(action, values || []);
     });
 
