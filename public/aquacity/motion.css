@@ -1,0 +1,89 @@
+/* AquaCity motion layer — styles that support motion.js (GSAP).
+   Everything here keeps content visible by default; motion.js only animates from it. */
+
+/* ---------- Browser surfaces ---------- */
+::selection{background:#bfe9e3;color:#063f35}
+html{accent-color:#12705a;caret-color:#0a6c55}
+
+/* ---------- Sidebar: liquid active indicator ---------- */
+.nav{position:relative}
+.nav-indicator{position:absolute;left:0;top:0;width:100%;height:49px;border-radius:9px;background:linear-gradient(120deg,#176c59,#0a6c55);box-shadow:0 6px 16px -8px #06493c99;transform-origin:50% 50%;pointer-events:none;z-index:0;opacity:0}
+.nav a{position:relative;z-index:1;transition:color .25s cubic-bezier(.16,1,.3,1),background-color .15s}
+.has-indicator .nav a.active,.has-indicator .nav a.active:hover{background:transparent}
+.page-number .track>span{width:100%;transform-origin:left center;transition:transform .7s cubic-bezier(.16,1,.3,1)}
+
+/* ---------- Scene depth layers ---------- */
+.scene.has-art{background-image:none!important}
+.scene-art{position:absolute;inset:0;overflow:hidden;border-radius:inherit;z-index:0}
+.scene-img{position:absolute;inset:0;will-change:transform}
+.scene:after{z-index:1}
+
+/* Tide: the rising waterline that reveals each scene */
+.tide{position:absolute;overflow:hidden;pointer-events:none;z-index:2;border-radius:inherit}
+.tide-line{position:absolute;left:0;right:0;top:0;height:110px;background:linear-gradient(to bottom,rgba(255,255,255,.95) 0,rgba(214,251,255,.85) 2px,rgba(69,229,237,.38) 4px,rgba(18,174,161,.14) 38%,rgba(18,174,161,0) 100%);filter:drop-shadow(0 -2px 6px rgba(69,229,237,.55))}
+
+/* ---------- Water network: flowing pulses ---------- */
+.network .leak-ring{fill:none;stroke:#ff7a5c;stroke-width:3;transform-box:fill-box;transform-origin:center}
+
+/* ---------- Before / after: real draggable divider ---------- */
+.compare{--split:50%;grid-template-columns:var(--split) 1fr!important;touch-action:pan-y}
+.compare>div:first-child{border-right:0}
+.compare>.compare-spacer{height:44px;visibility:hidden}
+.sr-only{position:absolute;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
+.compare>.compare-handle{position:absolute;overflow:visible;top:0;bottom:0;left:var(--split);width:0;height:auto;margin:0;padding:0;border:0;background:none;border-radius:0;z-index:2;line-height:1;font-size:0}
+.compare-handle:before{content:"";position:absolute;top:0;bottom:0;left:-3.5px;width:7px;background:#fffaf0;box-shadow:0 0 0 1px #e9dfc8,0 4px 18px #12241f40}
+.compare-grip{position:absolute;top:50%;left:0;width:48px;height:48px;margin:-24px 0 0 -24px;border-radius:50%;background:#fffaf0;border:1px solid #d9cba9;box-shadow:0 6px 18px -6px #12241f66;display:flex;align-items:center;justify-content:center;gap:2px;color:#0a6c55;cursor:grab;transition:box-shadow .2s}
+.compare-grip svg{width:14px;height:14px}
+.compare-grip:focus-visible{outline:3px solid #00b8cc;outline-offset:4px}
+.compare-grip.dragging{cursor:grabbing;box-shadow:0 2px 8px -4px #12241f88}
+.compare .compare-bar{transition:opacity .2s}
+
+/* ---------- Press feedback ---------- */
+@media (prefers-reduced-motion:no-preference){
+  .button,.tab,.tool,.label-chip[data-action],button.label-chip{transition:transform .14s cubic-bezier(.16,1,.3,1),background .15s,filter .15s,border-color .2s,box-shadow .2s}
+  .option{transition:background .15s,border-color .2s,box-shadow .2s}
+  .button:active,.tab:active,.tool:active{transform:scale(.97)}
+  .button svg{transition:transform .25s cubic-bezier(.16,1,.3,1)}
+  .button:hover svg{transform:translateX(3px)}
+  .tool:hover{box-shadow:0 6px 18px -10px #12241f55}
+  .progress-item svg,.medal{transition:transform .3s cubic-bezier(.16,1,.3,1)}
+  .progress-item:hover svg{transform:translateY(-2px)}
+  .nav a svg{transition:transform .3s cubic-bezier(.16,1,.3,1)}
+  .nav a:hover svg{transform:translateX(2px)}
+  .compare-grip{transition:transform .2s cubic-bezier(.16,1,.3,1),box-shadow .2s}
+  .compare-grip:hover{transform:scale(1.06)}
+  .compare-grip.dragging{transform:scale(.94)}
+}
+.track>span{transform-origin:left center}
+
+@media (prefers-reduced-motion:reduce){
+  .page-number .track>span{transition:none}
+}
+
+/* ---------- anime.js details (motion-anime.js) ---------- */
+/* droplets travelling the pipes */
+.network .drop-track{fill:none;stroke:none;filter:none}
+.network .drop-core{fill:#f6ffff;stroke:none}
+.network .drop-halo{fill:#8ff6f9;stroke:none;opacity:.42}
+.network .droplets,.network .spray{pointer-events:none}
+.network circle.spray-drop{fill:#dffcff;stroke:none;filter:none}
+
+/* sliding tab highlight */
+.tabs.has-pill{position:relative}
+.tabs.has-pill .tab{position:relative;z-index:1;transition:color .12s linear,transform .14s cubic-bezier(.16,1,.3,1)}
+.tabs.has-pill:not(.crisis-tabs .tabs) .tab{color:#333}
+.tab-ghost{position:absolute;left:0;top:0;pointer-events:none}
+.ghost-tab{position:absolute;display:flex;align-items:center;justify-content:center;color:#fff;font-size:14px;white-space:nowrap}
+.tab-pill{position:absolute;left:0;top:0;width:0;overflow:hidden;border-radius:9px;background:#126c55;box-shadow:0 6px 14px -8px #06493c99;pointer-events:none;z-index:2}
+.layer-tabs .tab-pill{border-radius:25px}
+.tabs.has-pill:not(.crisis-tabs .tabs) .tab{background:transparent}
+.crisis-tabs .tab-pill{border-radius:2px;background:#15977f;box-shadow:none;z-index:2}
+.crisis-tabs .tabs.has-pill .tab.active{border-bottom-color:transparent}
+
+/* ripples where you touch the water */
+.scene{cursor:default}
+.ripple{position:absolute;width:0;height:0;z-index:1;pointer-events:none}
+.ripple i{position:absolute;left:-80px;top:-80px;width:160px;height:160px;border-radius:50%;border:2.5px solid rgba(255,255,255,.95);box-shadow:0 3px 7px rgba(6,73,60,.38);opacity:0}
+
+/* springy values need a box to scale */
+.allocation-row output,.box output{display:inline-block}
