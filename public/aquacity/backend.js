@@ -21,6 +21,7 @@ const say = (msg, isError) => {
 const friendly = (e) => {
   const m = (e && e.message) || String(e);
   if (/invalid login/i.test(m)) return "Incorrect email or password.";
+  if (/pwned|leaked|compromised|weak/i.test(m)) return "This password is too common or has been leaked. Please choose a stronger one.";
   if (/already registered/i.test(m)) return "This email already has an account. Please log in.";
   if (/email not confirmed/i.test(m)) return "Please confirm your email first — check your inbox.";
   if (/password/i.test(m) && /6/.test(m)) return "Password must be at least 6 characters.";
@@ -62,14 +63,26 @@ if (isWelcome) {
         if (error) throw error;
         location.replace(DASHBOARD);
       } else if (action === "signup") {
+        const weak = [];
+        if (!password || password.length < 8) weak.push("8+ characters");
+        if (!/[A-Z]/.test(password)) weak.push("an uppercase letter");
+        if (!/[a-z]/.test(password)) weak.push("a lowercase letter");
+        if (!/\d/.test(password)) weak.push("a number");
+        if (!/[^A-Za-z0-9]/.test(password)) weak.push("a symbol");
+        if (weak.length) { say("Password is too weak. Add " + weak.join(", ") + ".", true); return; }
         say("Creating your account…");
         const { data, error } = await sb.auth.signUp({
           email, password,
           options: { emailRedirectTo: location.origin + location.pathname },
         });
         if (error) throw error;
-        if (data.session) location.replace(DASHBOARD);
-        else say("Almost there! Check your email to confirm your account.");
+        if (data.user && Array.isArray(data.user.identities) && data.user.identities.length === 0) {
+          say("This email already has an account. Please log in.", true); return;
+        }
+        if (data.session) { location.replace(DASHBOARD); return; }
+        const { error: e2 } = await sb.auth.signInWithPassword({ email, password });
+        if (e2) throw e2;
+        location.replace(DASHBOARD);
       } else if (action === "reset-password") {
         say("Sending reset link…");
         const { error } = await sb.auth.resetPasswordForEmail(email, {

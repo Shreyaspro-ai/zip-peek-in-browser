@@ -7,9 +7,9 @@ export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
       { title: "AquaCity — Better water. Better cities." },
-      { name: "description", content: "A citizen-powered movement for a water-secure Bengaluru." },
+      { name: "description", content: "A citizen-powered movement for a water-secure future." },
       { property: "og:title", content: "AquaCity — Better water. Better cities." },
-      { property: "og:description", content: "A citizen-powered movement for a water-secure Bengaluru." },
+      { property: "og:description", content: "A citizen-powered movement for a water-secure future." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
