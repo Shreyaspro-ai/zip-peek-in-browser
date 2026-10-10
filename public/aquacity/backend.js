@@ -113,8 +113,9 @@ if (isWelcome) {
       for (let i = 0; i < str.length; i++) { h ^= str.charCodeAt(i); h = Math.imul(h, 16777619); }
       return ((h >>> 0) % 100000) / 100000; // 0..1
     };
-    const NUM = /^([+\-−]?)(\d[\d,]*(?:\.\d+)?)(\s?(?:%|[A-Za-z\/]{1,8}(?:\s[A-Za-z\/]{1,6})?))?$/;
+    const NUM = /^([+\-−]?[$₹€£]?)(\d[\d,]*(?:\.\d+)?)(\s?(?:%|[A-Za-z\/]{1,8}(?:\s[A-Za-z\/]{1,6})?))?$/;
     const originals = new WeakMap();
+    const lastOut = new WeakMap();
     const keyOf = new WeakMap();
     const currentPage = () => document.getElementById("page")?.dataset.page || "unknown";
 
@@ -139,7 +140,7 @@ if (isWelcome) {
       for (const node of nodes) {
         if (!eligible(node)) continue;
         let orig = originals.get(node);
-        if (orig === undefined) { orig = node.nodeValue; }
+        if (orig === undefined || node.nodeValue !== lastOut.get(node)) { orig = node.nodeValue; }
         const t = orig.trim();
         const m = t.match(NUM);
         if (!m) continue;
@@ -156,16 +157,18 @@ if (isWelcome) {
         const delta = Number(city.deltas[key] || 0) / 100;
         let v = base * (1 + variance + delta);
         const isPct = unitRaw.trim() === "%";
-        if (isPct && !sign) v = Math.min(100, Math.max(0, v));
+        if (isPct && !/[+\-−]/.test(sign)) v = Math.min(100, Math.max(0, v));
         if (!raw.includes(".")) v = Math.round(v);
         const out = format(v, raw, unitRaw);
-        node.nodeValue = orig.replace(raw, out);
+        const nv = orig.replace(raw, out);
+        lastOut.set(node, nv);
+        if (node.nodeValue !== nv) node.nodeValue = nv;
       }
     }
     let pending = false;
     const schedule = () => { if (pending) return; pending = true; requestAnimationFrame(() => { pending = false; observer.disconnect(); transformPage(); observe(); }); };
     const observer = new MutationObserver(schedule);
-    const observe = () => { const p = document.getElementById("page"); if (p) observer.observe(p, { childList: true, subtree: true }); };
+    const observe = () => { const p = document.getElementById("page"); if (p) observer.observe(p, { childList: true, subtree: true, characterData: true }); };
     transformPage(); observe();
 
     const toast = (msg) => {
