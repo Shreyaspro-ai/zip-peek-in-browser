@@ -169,7 +169,7 @@ if (isWelcome) {
     const schedule = () => { if (pending) return; pending = true; requestAnimationFrame(() => { pending = false; observer.disconnect(); transformPage(); observe(); }); };
     const observer = new MutationObserver(schedule);
     const observe = () => { const p = document.getElementById("page"); if (p) observer.observe(p, { childList: true, subtree: true, characterData: true }); };
-    transformPage(); observe();
+    window.__aq = { transformPage, city, NUM }; transformPage(); observe();
 
     const toast = (msg) => {
       let t = document.getElementById("aq-toast");
