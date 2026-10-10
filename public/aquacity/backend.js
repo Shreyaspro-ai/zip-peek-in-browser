@@ -109,9 +109,10 @@ if (isWelcome) {
     const { data: cityRow } = await sb.rpc("ensure_city_state");
     const city = { seed: cityRow?.seed ?? 1, deltas: cityRow?.deltas ?? {} };
     const hash = (str) => {
-      let h = 2166136261 ^ city.seed;
+      let h = Math.imul(city.seed ^ 0x9e3779b9, 2654435761);
       for (let i = 0; i < str.length; i++) { h ^= str.charCodeAt(i); h = Math.imul(h, 16777619); }
-      return ((h >>> 0) % 100000) / 100000; // 0..1
+      h ^= h >>> 16; h = Math.imul(h, 0x85ebca6b); h ^= h >>> 13; h = Math.imul(h, 0xc2b2ae35); h ^= h >>> 16;
+      return (h >>> 0) / 4294967296; // 0..1
     };
     const NUM = /^([+\-−]?[$₹€£]?)(\d[\d,]*(?:\.\d+)?)(\s?(?:%|[A-Za-z\/]{1,8}(?:\s[A-Za-z\/]{1,6})?))?$/;
     const originals = new WeakMap();
@@ -169,7 +170,7 @@ if (isWelcome) {
     const schedule = () => { if (pending) return; pending = true; requestAnimationFrame(() => { pending = false; observer.disconnect(); transformPage(); observe(); }); };
     const observer = new MutationObserver(schedule);
     const observe = () => { const p = document.getElementById("page"); if (p) observer.observe(p, { childList: true, subtree: true, characterData: true }); };
-    window.__aq = { transformPage, city, NUM, hash, originals }; transformPage(); observe();
+    transformPage(); observe();
 
     const toast = (msg) => {
       let t = document.getElementById("aq-toast");
