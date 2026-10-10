@@ -1,0 +1,109 @@
+/* Static component calibration against the supplied 1536 × 1024 designs. */
+.nav a.active{box-shadow:none!important}
+.nav-indicator{box-shadow:none!important}
+.component-icon{object-fit:contain;flex-shrink:0;width:28px;height:30px}
+[data-reference="map"] .grid.three .component-icon{width:26px;height:30px}
+[data-reference="planning"] .box:first-of-type .component-icon{width:34px;height:34px;margin-right:3px}
+[data-reference="planning"] .tool>.component-icon{width:27px;height:31px}
+[data-reference="planning"] .box:has(.small) .grid .component-icon{width:28px;height:29px}
+[data-reference="projects"] .table .component-icon{width:23px;height:24px;vertical-align:middle;margin-right:14px}
+[data-reference="projects"] .effects>.component-icon{width:23px;height:31px;align-self:flex-start}
+[data-reference="crisis"] .grid .component-icon{width:40px;height:40px}
+[data-reference="simulator"] .compare-bar .component-icon{width:39px;height:41px}
+[data-reference="progress"] .outcome .component-icon{width:28px;height:29px}
+[data-reference="projects"] .nav a,[data-reference="projects"] .welcome-label{gap:11px}
+[data-reference="planning"] .nav a,[data-reference="planning"] .welcome-label{gap:13px}
+[data-reference="sanitation"] .nav a,[data-reference="sanitation"] .welcome-label{gap:21px}
+[data-reference="projects"] .heading .eyebrow:before{left:-69px;transform:none}
+[data-reference="projects"] .heading>p{margin-left:4px;font-size:15px}
+[data-reference="projects"] .project-card>.button{width:auto;right:15px}
+[data-reference="projects"] .project-card>img{height:196px}
+[data-reference="projects"] .project-card h2{font-family:Georgia,serif;font-weight:400;font-size:23px;margin:10px 0 8px}
+[data-reference="projects"] .project-card .effects{position:absolute;left:17px;right:15px;top:406px;margin:0;font-size:14px;line-height:23px;align-items:flex-start}
+[data-reference="projects"] .project-card .effects svg{width:23px;height:27px;flex-shrink:0;margin-top:1px}
+[data-reference="projects"] .project-card .effects>div>div{line-height:23px}
+[data-reference="projects"] .project-card .table td{font-size:14px}
+[data-reference="projects"] .project-panel h2{font-weight:400}
+[data-reference="map"] .chip-large{white-space:nowrap;font:400 20px/23px Georgia,serif;letter-spacing:-.6px;padding-left:44px;padding-right:8px}
+[data-reference="map"] .chip-large small{letter-spacing:0;font-size:12px}
+[data-reference="map"] .box:last-child>img{position:absolute;left:15px;top:115px;width:321px;height:106px;margin:0!important}
+[data-reference="map"] .box:last-child>.grid.three{position:absolute;left:18px;right:18px;top:239px;margin:0;padding:0}
+[data-reference="map"] .box:last-child>.divider:nth-of-type(2){position:absolute;left:20px;right:20px;top:295px;margin:14px 0}
+[data-reference="map"] .box:last-child>.divider:nth-of-type(3){position:absolute;left:20px;right:20px;top:511px;margin:0}
+[data-reference="map"] .box:last-child>.table{position:absolute;left:20px;top:340px;width:312px}
+[data-reference="map"] .box:last-child>.table td{height:29px}
+[data-reference="map"] .box:last-child>h3{position:absolute;left:20px;top:320px;margin:0}
+[data-reference="map"] .box:last-child>h3:last-of-type{top:523px}
+[data-reference="map"] .box:last-child>.row{position:absolute;left:20px;right:18px;top:552px}
+[data-reference="map"] .box:last-child>div:last-child{position:absolute;left:18px;right:15px;top:653px;margin:0!important}
+[data-reference="water"] .heading h1{font-family:"Times New Roman",serif;font-size:60px!important;letter-spacing:-1.2px}
+[data-reference="water"] .reference-sky{display:none}
+[data-reference="water"] .allocation-row{margin:16px 0}
+[data-reference="water"] .box:has(.allocation-row)>.button{position:absolute;left:18px;right:18px;bottom:15px;width:auto;height:40px;min-height:40px}
+[data-reference="sanitation"] #page>.grid.four{display:block}
+[data-reference="sanitation"] #page>.grid.four>.box{position:absolute!important;top:0;width:300px}
+[data-reference="sanitation"] #page>.grid.four>.box:nth-child(1){left:0}
+[data-reference="sanitation"] #page>.grid.four>.box:nth-child(2){left:318px;width:295px}
+[data-reference="sanitation"] #page>.grid.four>.box:nth-child(3){left:631px;width:302px}
+[data-reference="sanitation"] #page>.grid.four>.box:nth-child(4){left:954px}
+[data-reference="sanitation"] .stat>.track{position:absolute;top:80px;left:0;margin:0;width:227px}
+[data-reference="sanitation"] .stat:after{top:78px;bottom:auto;font-size:13px!important}
+[data-reference="sanitation"] .box:has(#reuse-value)>.range::-webkit-slider-thumb{transform:translateX(-18px)}
+[data-reference="sanitation"] .box:has(#reuse-value)>.row{left:53px;right:42px;top:79px}
+[data-reference="sanitation"] #page>.grid>.box:nth-child(2) .track{width:219px}
+[data-reference="sanitation"] #page>.grid>.box:nth-child(3) .track{width:218px}
+[data-reference="sanitation"] #page>.grid>.box:nth-child(3) .track span{width:78%!important}
+[data-reference="sanitation"] #page>.grid>.box:nth-child(4) .track{width:167px}
+[data-reference="sanitation"] #page>.grid>.box:nth-child(4) .track span{width:38%!important}
+[data-reference="sanitation"] .reference-glyph{border-radius:50%}
+[data-reference="sanitation"] .box:has(#reuse-value)>.row{position:absolute;left:54px;right:42px;top:79px;margin:0!important}
+[data-reference="sanitation"] .box:has(#reuse-value)>.range{position:absolute;left:21px;top:131px;width:256px}
+[data-reference="sanitation"] .box:has(#reuse-value)>.range-labels{position:absolute;left:18px;right:23px;top:153px}
+[data-reference="sanitation"] .box:has(#reuse-value)>p:last-of-type{position:absolute;left:18px;right:18px;top:184px;height:44px;margin:0!important}
+[data-reference="sanitation"] .box:has(#reuse-value)>.button{position:absolute;left:20px;right:18px;bottom:16px;width:auto;min-height:38px;height:38px}
+[data-reference="planning"] .heading h1{margin-top:-8px}
+[data-reference="planning"] .heading p{font-family:Arial,sans-serif;font-size:20px}
+[data-reference="planning"] #page>p{margin:0;font-size:13px;line-height:19px}
+[data-reference="planning"] .tool p{font-size:11.5px}
+[data-reference="planning"] .tool{gap:14px;position:relative;padding-right:13px}
+[data-reference="planning"] .tool .chevron{position:absolute;right:9px;margin:0}
+[data-reference="planning"] .heading h1{transform:scaleX(1.05);transform-origin:left center}
+[data-reference="learning"] .heading h1{transform:scaleX(.97);transform-origin:left center}
+[data-reference="planning"] .tools{padding-left:13px;padding-right:10px}
+[data-reference="planning"] .modal h3{font-size:18px;font-weight:500;margin-top:6px}
+[data-reference="planning"] .modal p{font-size:13px;margin-top:5px}
+[data-reference="planning"] .box:last-child>.grid{grid-template-columns:241px 225px!important}
+[data-reference="planning"] .box:last-child .secondary{color:#1d2020}
+[data-reference="planning"] .box:has(.grid.three):first-of-type>.grid{display:block;position:relative;height:40px}
+[data-reference="planning"] .box:has(.grid.three):first-of-type>.grid>.row{position:absolute;top:0;left:0;width:210px;padding-right:9px}
+[data-reference="planning"] .box:has(.grid.three):first-of-type>.grid>.row:nth-child(2){left:236px;width:194px}
+[data-reference="planning"] .box:has(.grid.three):first-of-type>.grid>.row:nth-child(3){left:450px;width:166px}
+[data-reference="planning"] .box:has(.grid.three):first-of-type>.grid>.row svg{margin-right:3px}
+[data-reference="crisis"] .label-chip{white-space:nowrap}
+[data-reference="crisis"] .box:has(.eyebrow) h2 .red{display:inline-flex;align-items:center;justify-content:center;background:#d64b2e;color:white;font-size:23px;width:31px;height:31px;vertical-align:middle;border-radius:50%}
+[data-reference="crisis"] .box:has(.eyebrow) .grid>.row{border-right:1px solid #e5dccc}
+[data-reference="crisis"] .box:has(.eyebrow) .grid>.row:last-child{border:0}
+[data-reference="missions"] .mission-card>img.mission-photo-icon{width:56px!important;height:56px!important;left:26px;top:25px}
+[data-reference="missions"] .mission-card>.row>h2{margin-left:7px;font-weight:400;letter-spacing:-.8px}
+[data-reference="learning"] .lesson-card h3{font-family:Arial,sans-serif;font-size:16px}
+[data-reference="learning"] .lesson-card>.row{top:210px}
+[data-reference="learning"] .lesson-card>.button{font-size:16px;font-weight:500}
+[data-reference="learning"] .lesson-card>.row .track{height:9px}
+[data-reference="progress"] .heading h1{font-size:66px!important;letter-spacing:-2px}
+[data-reference="progress"] .box>.row>div:last-child{margin-right:22px}
+[data-reference="progress"] .outcome small{font-size:11px}
+[data-reference="progress"] .outcome .value{font-weight:500}
+.budget-info{position:absolute;left:378px;top:21px;border:1px solid #252525;border-radius:50%;width:17px;height:17px;text-align:center;font:12px/15px Georgia,serif;color:#252525}
+[data-reference="command"] .reference-photo[src$="tiles-1.webp"]{mask-image:linear-gradient(to right,transparent,#000 25%,#000 90%,transparent)}
+[data-reference="projects"] .reference-photo[src$="tiles-0.webp"]{mask-image:linear-gradient(to right,transparent,#000 8%)}
+.reference-sky{display:none}
+[data-reference="water"] .reference-photo[src$="tiles-1.webp"]{mask-image:linear-gradient(to bottom,#000 60%,transparent 72%)}
+[data-reference="command"] .overview{background:transparent}
+[data-reference="planning"] .box:has(.small)>.row{position:absolute;left:17px;right:15px;top:17px;gap:21px}
+[data-reference="planning"] .box:has(.small)>.divider{position:absolute;left:12px;right:12px;top:87px;margin:0}
+[data-reference="planning"] .box:has(.small)>.grid{position:absolute;left:20px;right:12px;top:105px;grid-template-columns:167px 122px 122px!important}
+[data-reference="planning"] .box:has(.small)>.grid>.row{gap:13px!important}
+[data-reference="planning"] .box:has(.small)>.grid>.row:first-child{gap:21px!important}
+[data-reference="planning"] .box:has(.small)>.grid>.row strong{font-size:16px}
+[data-reference="planning"] .box:has(.small)>.grid>.row>div>div:first-of-type{font-size:11px!important}
+[data-reference="planning"] .box:has(.small)>.grid>.row>div>div:last-child{font-size:12px!important}
