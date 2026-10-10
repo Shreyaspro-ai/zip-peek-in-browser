@@ -109,9 +109,10 @@ if (isWelcome) {
     const { data: cityRow } = await sb.rpc("ensure_city_state");
     const city = { seed: cityRow?.seed ?? 1, deltas: cityRow?.deltas ?? {} };
     const hash = (str) => {
-      let h = 2166136261 ^ city.seed;
+      let h = Math.imul(city.seed ^ 0x9e3779b9, 2654435761);
       for (let i = 0; i < str.length; i++) { h ^= str.charCodeAt(i); h = Math.imul(h, 16777619); }
-      return ((h >>> 0) % 100000) / 100000; // 0..1
+      h ^= h >>> 16; h = Math.imul(h, 0x85ebca6b); h ^= h >>> 13; h = Math.imul(h, 0xc2b2ae35); h ^= h >>> 16;
+      return (h >>> 0) / 4294967296; // 0..1
     };
     const NUM = /^([+\-−]?[$₹€£]?)(\d[\d,]*(?:\.\d+)?)(\s?(?:%|[A-Za-z\/]{1,8}(?:\s[A-Za-z\/]{1,6})?))?$/;
     const originals = new WeakMap();
@@ -121,6 +122,8 @@ if (isWelcome) {
 
     function eligible(node) {
       const p = node.parentElement;
+      if (p && p.closest("[id]") && document.querySelector(`input[data-output="${p.closest("[id]").id}"]`)) return false;
+      if (p && p.closest(".box, div")?.querySelector("input[type=range]") && p.closest("output, [id], .value") && p.parentElement?.querySelector("input[type=range]")) return false;
       if (!p || p.closest("#sidebar, .page-number, svg, output, script, style, button, label, .tab, .chip, h1, h2")) return false;
       return true;
     }
