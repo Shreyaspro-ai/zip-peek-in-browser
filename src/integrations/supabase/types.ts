@@ -44,21 +44,33 @@ export type Database = {
       city_state: {
         Row: {
           actions_count: number
+          constructive_count: number
           deltas: Json
+          destructive_count: number
+          last_action_at: string | null
+          metrics: Json
           seed: number
           updated_at: string
           user_id: string
         }
         Insert: {
           actions_count?: number
+          constructive_count?: number
           deltas?: Json
+          destructive_count?: number
+          last_action_at?: string | null
+          metrics?: Json
           seed?: number
           updated_at?: string
           user_id: string
         }
         Update: {
           actions_count?: number
+          constructive_count?: number
           deltas?: Json
+          destructive_count?: number
+          last_action_at?: string | null
+          metrics?: Json
           seed?: number
           updated_at?: string
           user_id?: string
@@ -148,7 +160,11 @@ export type Database = {
         Args: never
         Returns: {
           actions_count: number
+          constructive_count: number
           deltas: Json
+          destructive_count: number
+          last_action_at: string | null
+          metrics: Json
           seed: number
           updated_at: string
           user_id: string
@@ -159,6 +175,14 @@ export type Database = {
           isOneToOne: true
           isSetofReturn: false
         }
+      }
+      evaluate_city_action: {
+        Args: { _action: string; _inputs: Json; _keys: string[]; _page: string }
+        Returns: Json
+      }
+      num_input: {
+        Args: { _default: number; _inputs: Json; _name: string }
+        Returns: number
       }
       reset_city: { Args: never; Returns: undefined }
     }
