@@ -105,26 +105,128 @@ if (isWelcome) {
     const log = (page, action, details = {}) =>
       sb.from("activity_log").insert({ user_id: user.id, page, action, details }).then(() => {});
 
-    // Backend hook buttons emitted by the site
+    // ---------- Personal city: unique, persisted stats per user ----------
+    const { data: cityRow } = await sb.rpc("ensure_city_state");
+    const city = { seed: cityRow?.seed ?? 1, deltas: cityRow?.deltas ?? {} };
+    const hash = (str) => {
+      let h = 2166136261 ^ city.seed;
+      for (let i = 0; i < str.length; i++) { h ^= str.charCodeAt(i); h = Math.imul(h, 16777619); }
+      return ((h >>> 0) % 100000) / 100000; // 0..1
+    };
+    const NUM = /^([+\-−]?)(\d[\d,]*(?:\.\d+)?)(\s?(?:%|[A-Za-z\/]{1,8}(?:\s[A-Za-z\/]{1,6})?))?$/;
+    const originals = new WeakMap();
+    const keyOf = new WeakMap();
+    const currentPage = () => document.getElementById("page")?.dataset.page || "unknown";
+
+    function eligible(node) {
+      const p = node.parentElement;
+      if (!p || p.closest("#sidebar, .page-number, svg, output, script, style, button, label, .tab, .chip, h1, h2")) return false;
+      return true;
+    }
+    function format(n, raw, unit) {
+      const dec = (raw.split(".")[1] || "").length;
+      let s = n.toFixed(dec);
+      if (raw.includes(",")) s = Number(s).toLocaleString("en-US", { minimumFractionDigits: dec, maximumFractionDigits: dec });
+      return s;
+    }
+    function transformPage() {
+      const page = document.getElementById("page");
+      if (!page) return;
+      const seen = {};
+      const walker = document.createTreeWalker(page, NodeFilter.SHOW_TEXT);
+      const nodes = [];
+      while (walker.nextNode()) nodes.push(walker.currentNode);
+      for (const node of nodes) {
+        if (!eligible(node)) continue;
+        let orig = originals.get(node);
+        if (orig === undefined) { orig = node.nodeValue; }
+        const t = orig.trim();
+        const m = t.match(NUM);
+        if (!m) continue;
+        const [, sign, raw, unitRaw = ""] = m;
+        const base = Number(raw.replace(/,/g, ""));
+        if (!isFinite(base) || (base < 10 && !raw.includes("."))) continue;
+        if (/^(19|20)\d\d$/.test(raw) && !unitRaw) continue;
+        originals.set(node, orig);
+        const pg = currentPage();
+        seen[t] = (seen[t] || 0) + 1;
+        const key = `${pg}:${t}:${seen[t]}`;
+        keyOf.set(node, key);
+        const variance = (hash(key) - 0.5) * 0.24; // ±12% unique per user
+        const delta = Number(city.deltas[key] || 0) / 100;
+        let v = base * (1 + variance + delta);
+        const isPct = unitRaw.trim() === "%";
+        if (isPct && !sign) v = Math.min(100, Math.max(0, v));
+        if (!raw.includes(".")) v = Math.round(v);
+        const out = format(v, raw, unitRaw);
+        node.nodeValue = orig.replace(raw, out);
+      }
+    }
+    let pending = false;
+    const schedule = () => { if (pending) return; pending = true; requestAnimationFrame(() => { pending = false; observer.disconnect(); transformPage(); observe(); }); };
+    const observer = new MutationObserver(schedule);
+    const observe = () => { const p = document.getElementById("page"); if (p) observer.observe(p, { childList: true, subtree: true }); };
+    transformPage(); observe();
+
+    const toast = (msg) => {
+      let t = document.getElementById("aq-toast");
+      if (!t) {
+        t = document.createElement("div"); t.id = "aq-toast"; t.setAttribute("role", "status");
+        t.style.cssText = "position:fixed;left:50%;bottom:24px;transform:translateX(-50%);z-index:9999;padding:12px 20px;border-radius:12px;background:#061c3b;color:#fff;font:600 14px Arial,sans-serif;box-shadow:0 10px 30px #0004;transition:opacity .3s;opacity:0;pointer-events:none";
+        document.body.append(t);
+      }
+      t.textContent = msg; t.style.opacity = "1";
+      clearTimeout(t._h); t._h = setTimeout(() => (t.style.opacity = "0"), 2600);
+    };
+
+    const LABELS = {
+      "apply-allocation": "Water allocation applied",
+      "apply-reuse": "Reuse plan applied",
+      "run-crisis": "Crisis scenario simulated",
+      "activate-response": "Emergency response activated",
+      "run-simulation": "Simulation complete",
+      "apply-plan": "District plan applied",
+      "repair": "Leak repaired",
+    };
+    async function runAction(action, values = []) {
+      const keys = [];
+      const page = document.getElementById("page");
+      const walker = document.createTreeWalker(page, NodeFilter.SHOW_TEXT);
+      while (walker.nextNode()) { const k = keyOf.get(walker.currentNode); if (k) keys.push(k); }
+      const ranges = values.filter((v) => v.value !== "" && !isNaN(Number(v.value)));
+      const intensity = ranges.length ? 1 + ranges.reduce((a, v) => a + (Number(v.value) % 100) / 100, 0) / ranges.length * 3 : 1.5;
+      const { data, error } = await sb.rpc("apply_city_action", { _page: currentPage(), _action: action, _keys: keys, _intensity: intensity });
+      if (error) { toast("Couldn't save — please try again."); return; }
+      city.deltas = data.deltas || {};
+      transformPage();
+      toast(`${LABELS[action] || "Saved"} · your city has been updated`);
+    }
+
+    // Backend hook buttons emitted by the site (Apply, Run Scenario, Run Simulation, …)
     document.addEventListener("aquacity:action", (e) => {
-      const { page, action, ...details } = e.detail || {};
-      log(page || "unknown", action || "unknown", details);
+      const { action, values } = e.detail || {};
+      runAction(action, values || []);
     });
 
     // Record meaningful interactions and quiz answers
     document.addEventListener("click", (e) => {
       const el = e.target.closest("[data-action]");
       if (!el) return;
-      const page = document.getElementById("page")?.dataset.page || "unknown";
+      const page = currentPage();
       const act = el.dataset.action;
       if (act === "check-answer") {
         const picked = document.querySelector('#page input[name="quiz"]:checked');
         const lesson = document.querySelector("#page h2")?.textContent || "lesson";
-        if (picked) sb.from("quiz_attempts").insert({ user_id: user.id, lesson, answer: picked.value, correct: picked.value === "0" }).then(() => {});
+        if (picked) {
+          const correct = picked.value === "0";
+          sb.from("quiz_attempts").insert({ user_id: user.id, lesson, answer: picked.value, correct }).then(() => {
+            if (correct) toast("Correct! +10 points");
+          });
+        }
+        return;
       }
-      if (!el.dataset.backend && !/^close-/.test(act)) {
-        log(page, act, { ...el.dataset });
-      }
+      if (act === "apply-plan" || act === "repair") { setTimeout(() => runAction(act), 0); return; }
+      if (!el.dataset.backend && !/^close-/.test(act)) log(page, act, { ...el.dataset });
     }, true);
 
     sb.auth.onAuthStateChange((event) => {
