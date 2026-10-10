@@ -1,3 +1,3 @@
 # Roadmap
 
-- Publish the site at aquacity.lovable.app (requested 2026-10-10).
+- [x] Publish the site at aquacity-app.lovable.app (requested 2026-10-10; "aquacity" was already taken).
